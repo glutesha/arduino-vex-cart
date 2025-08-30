@@ -12,11 +12,12 @@ Vex5_Motor ebedka1;
 Vex5_Motor ebedka2;
 
 int leftspeed = 0;
-int period = 5000;
 int rightspeed = 0;
-int maxspeed = 3000;
+int maxspeed = 2000;
 int camspeed = 0;
-unsigned long time_now = 0;
+int diff = 50; // Разница, при которой происходит обновление
+
+unsigned long prevPulse4 = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -62,43 +63,46 @@ void loop() {
   // 2 - PITCH
   // 7 - ROLL
 
+    maxspeed = map(pulseIn(3, HIGH), 1000, 2000, 0, 2000);
 
-  maxspeed = map(pulseIn(3, HIGH), 1000, 2000, 0, 3000);
-  if(pulseIn(7, HIGH) > 1500){
-      leftspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
-      rightspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
-  }
-  else if(pulseIn(7, HIGH) < 1400){
-      leftspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
-      rightspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0- maxspeed);
-  }
-  else {
-    leftspeed = map(pulseIn(2, HIGH), 1000, 2000, maxspeed, 0- maxspeed);
-    rightspeed = map(pulseIn(2, HIGH), 1000, 2000, 0 -maxspeed, maxspeed);
-  }
+      if(pulseIn(7, HIGH) > 1500){
+          leftspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
+          rightspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
+      }
+      else if(pulseIn(7, HIGH) < 1400){
+          leftspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
+          rightspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0- maxspeed);
+      }
+      else {
+        leftspeed = map(pulseIn(2, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
+        rightspeed = map(pulseIn(2, HIGH), 1000, 2000, 0 - maxspeed, maxspeed);
+      }
 
-  if(pulseIn(4, HIGH) > 1800) {
-    ebedka1.setSpeed(2000);
-    ebedka2.setSpeed(-2000);
+      motor1.setSpeed(rightspeed);
+      motor2.setSpeed(rightspeed);
+      motor3.setSpeed(leftspeed);
+      motor4.setSpeed(leftspeed);
+    
+    if(pulseIn(4, HIGH) - prevPulse4 >= diff){
+      if(pulseIn(4, HIGH) > 1800) {
+        ebedka1.setSpeed(2000);
+        ebedka2.setSpeed(-2000);
+      }
+      else if(pulseIn(4, HIGH) < 1300){
+        ebedka1.setSpeed(-2000);
+        ebedka2.setSpeed(2000);
+      }
+      else{
+        ebedka1.setSpeed(0);
+        ebedka2.setSpeed(0);
+      }
+    }
 
-  }
-  else if(pulseIn(4, HIGH) < 1300){
-    ebedka1.setSpeed(-2000);
-    ebedka2.setSpeed(2000);
+    int angle = map(pulseIn(5, HIGH), 1000, 2000, 0, -300); // Последнее число - условная единица позиции моторов
+    Serial.println(pulseIn(5, HIGH));
+    int anglecam = map(pulseIn(6, HIGH), 1000, 2000, 0, 270); // Последнее число - условная единица позиции моторов
+    motor5.setPosition(angle, 1000);
+    camera.write(anglecam);
 
-  }
-  else{
-    ebedka1.setSpeed(0);
-    ebedka2.setSpeed(0);
-  }
-  motor1.setSpeed(rightspeed);
-  motor2.setSpeed(rightspeed);
-  motor3.setSpeed(leftspeed);
-  motor4.setSpeed(leftspeed);
-
-  int angle = map(pulseIn(5, HIGH), 1000, 2000, 0, -300); // Последнее число - условная единица позиции моторов
-  Serial.println(pulseIn(5, HIGH));
-  int anglecam = map(pulseIn(6, HIGH), 1000, 2000, 0, 270); // Последнее число - условная единица позиции моторов
-  motor5.setPosition(angle, 1000);
-  camera.write(anglecam);
+    prevPulse4 = pulseIn(4, HIGH);
 }
