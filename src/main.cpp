@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include <Vex5.h>
 #include <Servo.h>
+#include <Vex5.h>
 Servo camera;
 
 Vex5_Motor motor1;
@@ -15,7 +15,7 @@ int leftspeed = 0;
 int rightspeed = 0;
 int maxspeed = 2000;
 int camspeed = 0;
-int diff = 50; // Разница, при которой происходит обновление
+int diff = 50;  // Разница, при которой происходит обновление
 
 unsigned long prevPulse4 = 0;
 
@@ -38,7 +38,6 @@ void setup() {
 }
 
 void loop() {
-
   /* while(Serial1.available()){
     gps.encode(Serial1.read());}// encode gps data
     if(millis() >= time_now + period){
@@ -55,9 +54,9 @@ void loop() {
         Serial.println("Logged!");
         dataFile.close();
         digitalWrite(13, HIGH);}
-  } Логика GPS, больше не используется */
+    } Логика GPS, больше не используется */
 
-	//motor.setSpeed(200);
+  // motor.setSpeed(200);
   // 5 - KNOB LEFT
   // 6 - KNOB RIGHT
   // 3 - GAS
@@ -65,46 +64,47 @@ void loop() {
   // 2 - PITCH
   // 7 - ROLL
 
-    maxspeed = map(pulseIn(3, HIGH), 1000, 2000, 0, 2000);
+  maxspeed = map(pulseIn(3, HIGH), 1000, 2000, 0, 2000);
 
-    int throttle = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, -maxspeed);
-    int steering = map(pulseIn(2, HIGH), 1000, 2000, maxspeed, -maxspeed);
+  int throttle = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, -maxspeed);
+  int steering = map(pulseIn(2, HIGH), 1000, 2000, maxspeed, -maxspeed);
 
-    int leftspeed  = throttle + steering;
-    int rightspeed = throttle - steering;
+  int leftspeed = throttle + steering;
+  int rightspeed = throttle - steering;
 
-    leftspeed  = constrain(leftspeed, -maxspeed, maxspeed);
-    rightspeed = constrain(rightspeed, -maxspeed, maxspeed);
+  leftspeed = constrain(leftspeed, -maxspeed, maxspeed);
+  rightspeed = constrain(rightspeed, -maxspeed, maxspeed);
 
-        if(maxspeed < 25 && pulseIn(2, HIGH) < 1050){
-          Serial.println("RESET");
-          digitalWrite(26, LOW); 
-        }
-      
-      motor1.setSpeed(rightspeed);
-      motor2.setSpeed(rightspeed);
-      motor3.setSpeed(leftspeed);
-      motor4.setSpeed(leftspeed);
-    
-    if(pulseIn(4, HIGH) - prevPulse4 >= diff){
-      if(pulseIn(4, HIGH) > 1800) {
-        ebedka1.setSpeed(2000);
-        ebedka2.setSpeed(-2000);
-      }
-      else if(pulseIn(4, HIGH) < 1300){
-        ebedka1.setSpeed(-2000);
-        ebedka2.setSpeed(2000);
-      }
-      else{
-        ebedka1.setSpeed(0);
-        ebedka2.setSpeed(0);
-      }
+  if (maxspeed < 25 && pulseIn(2, HIGH) < 1050) {
+    Serial.println("RESET");
+    digitalWrite(26, LOW);
+  }
+
+  motor1.setSpeed(rightspeed);
+  motor2.setSpeed(rightspeed);
+  motor3.setSpeed(leftspeed);
+  motor4.setSpeed(leftspeed);
+
+  if (pulseIn(4, HIGH) - prevPulse4 >= diff) {
+    if (pulseIn(4, HIGH) > 1800) {
+      ebedka1.setSpeed(2000);
+      ebedka2.setSpeed(-2000);
+    } else if (pulseIn(4, HIGH) < 1300) {
+      ebedka1.setSpeed(-2000);
+      ebedka2.setSpeed(2000);
+    } else {
+      ebedka1.setSpeed(0);
+      ebedka2.setSpeed(0);
     }
+  }
 
-    int angle = map(pulseIn(5, HIGH), 1000, 2000, 0, -300); // Последнее число - условная единица позиции моторов
-    int anglecam = map(pulseIn(6, HIGH), 1000, 2000, 0, 270); // Последнее число - условная единица позиции моторов
-    motor5.setPosition(angle, 1000);
-    camera.write(anglecam);
+  int angle = map(pulseIn(5, HIGH), 1000, 2000, 0,
+                  -300);  // Последнее число - условная единица позиции моторов
+  int anglecam =
+      map(pulseIn(6, HIGH), 1000, 2000, 0,
+          270);  // Последнее число - условная единица позиции моторов
+  motor5.setPosition(angle, 1000);
+  camera.write(anglecam);
 
-    prevPulse4 = pulseIn(4, HIGH);
+  prevPulse4 = pulseIn(4, HIGH);
 }
