@@ -67,11 +67,11 @@ void loop() {
 
     maxspeed = map(pulseIn(3, HIGH), 1000, 2000, 0, 2000);
 
-      if(pulseIn(7, HIGH) > 1500){
+      if(pulseIn(7, HIGH) > 1600){
           leftspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
           rightspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
       }
-      else if(pulseIn(7, HIGH) < 1400){
+      else if(pulseIn(7, HIGH) < 1300){
           leftspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
           rightspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0- maxspeed);
       }
