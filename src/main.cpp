@@ -67,22 +67,19 @@ void loop() {
 
     maxspeed = map(pulseIn(3, HIGH), 1000, 2000, 0, 2000);
 
-      if(pulseIn(7, HIGH) > 1600){
-          leftspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
-          rightspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
-      }
-      else if(pulseIn(7, HIGH) < 1300){
-          leftspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
-          rightspeed = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, 0- maxspeed);
-      }
-      else {
-        leftspeed = map(pulseIn(2, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
-        rightspeed = map(pulseIn(2, HIGH), 1000, 2000, 0 - maxspeed, maxspeed);
+    int throttle = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, -maxspeed);
+    int steering = map(pulseIn(2, HIGH), 1000, 2000, maxspeed, -maxspeed);
+
+    int leftspeed  = throttle + steering;
+    int rightspeed = throttle - steering;
+
+    leftspeed  = constrain(leftspeed, -maxspeed, maxspeed);
+    rightspeed = constrain(rightspeed, -maxspeed, maxspeed);
+
         if(maxspeed < 25 && pulseIn(2, HIGH) < 1050){
           Serial.println("RESET");
           digitalWrite(26, LOW); 
         }
-      }
       
       motor1.setSpeed(rightspeed);
       motor2.setSpeed(rightspeed);
