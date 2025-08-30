@@ -31,6 +31,8 @@ void setup() {
   ebedka1.begin(VEX5_PORT_5);
   ebedka2.begin(VEX5_PORT_4);
   pinMode(13, OUTPUT);
+  pinMode(26, OUTPUT);
+  digitalWrite(26, HIGH);
   digitalWrite(13, HIGH);
   camera.attach(28);
 }
@@ -76,8 +78,12 @@ void loop() {
       else {
         leftspeed = map(pulseIn(2, HIGH), 1000, 2000, maxspeed, 0 - maxspeed);
         rightspeed = map(pulseIn(2, HIGH), 1000, 2000, 0 - maxspeed, maxspeed);
+        if(maxspeed < 25 && pulseIn(2, HIGH) < 1050){
+          Serial.println("RESET");
+          digitalWrite(26, LOW); 
+        }
       }
-
+      
       motor1.setSpeed(rightspeed);
       motor2.setSpeed(rightspeed);
       motor3.setSpeed(leftspeed);
@@ -99,7 +105,6 @@ void loop() {
     }
 
     int angle = map(pulseIn(5, HIGH), 1000, 2000, 0, -300); // Последнее число - условная единица позиции моторов
-    Serial.println(pulseIn(5, HIGH));
     int anglecam = map(pulseIn(6, HIGH), 1000, 2000, 0, 270); // Последнее число - условная единица позиции моторов
     motor5.setPosition(angle, 1000);
     camera.write(anglecam);
