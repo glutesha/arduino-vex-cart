@@ -98,11 +98,8 @@ void loop() {
     }
   }
 
-  int angle = map(pulseIn(5, HIGH), 1000, 2000, 0,
-                  -300);  // Последнее число - условная единица позиции моторов
-  int anglecam =
-      map(pulseIn(6, HIGH), 1000, 2000, 0,
-          270);  // Последнее число - условная единица позиции моторов
+  int angle = map(pulseIn(5, HIGH), 1000, 2000, 0, -300);  // Последнее число - условная единица позиции моторов
+  int anglecam = map(pulseIn(6, HIGH), 1000, 2000, 0, 270);  // Последнее число - условная единица позиции моторов
   motor5.setPosition(angle, 1000);
   camera.write(anglecam);
 
