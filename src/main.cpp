@@ -64,7 +64,7 @@ void loop() {
   // 2 - PITCH
   // 7 - ROLL
 
-  maxspeed = map(pulseIn(3, HIGH), 1000, 2000, 0, 2000);
+  maxspeed = map(pulseIn(3, HIGH), 1000, 2000, 0, 3000);
 
   int throttle = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, -maxspeed);
   int steering = map(pulseIn(2, HIGH), 1000, 2000, maxspeed, -maxspeed);
