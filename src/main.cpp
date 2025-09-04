@@ -10,6 +10,7 @@ Vex5_Motor motor4;
 Vex5_Motor motor5;
 Vex5_Motor ebedka1;
 Vex5_Motor ebedka2;
+Vex5_Motor natyag1;
 
 int leftspeed = 0;
 int rightspeed = 0;
@@ -30,6 +31,7 @@ void setup() {
   motor5.begin(VEX5_PORT_8);
   ebedka1.begin(VEX5_PORT_5);
   ebedka2.begin(VEX5_PORT_4);
+  natyag1.begin(VEX5_PORT_2);
   pinMode(13, OUTPUT);
   pinMode(26, OUTPUT);
   digitalWrite(26, HIGH);
@@ -67,7 +69,7 @@ void loop() {
   maxspeed = map(pulseIn(3, HIGH), 1000, 2000, 0, 3000);
 
   int throttle = map(pulseIn(7, HIGH), 1000, 2000, maxspeed, -maxspeed);
-  int steering = map(pulseIn(2, HIGH), 1000, 2000, maxspeed, -maxspeed);
+  int steering = map(pulseIn(2, HIGH), 1000, 2000, -maxspeed, maxspeed);
 
   int leftspeed = throttle + steering;
   int rightspeed = throttle - steering;
@@ -75,9 +77,19 @@ void loop() {
   leftspeed = constrain(leftspeed, -maxspeed, maxspeed);
   rightspeed = constrain(rightspeed, -maxspeed, maxspeed);
 
-  if (maxspeed < 25 && pulseIn(2, HIGH) < 1050) {
-    Serial.println("RESET");
-    digitalWrite(26, LOW);
+  if (maxspeed < 25) {
+    if(pulseIn(2, HIGH) < 1050) {
+      Serial.println("RESET");
+      digitalWrite(26, LOW);
+    } else {
+       if (pulseIn(2, HIGH) > 1800) {
+          natyag1.setSpeed(2000);
+        } else if (pulseIn(2, HIGH) < 1300) {
+          natyag1.setSpeed(-2000);
+        } else {
+          natyag1.setSpeed(0);
+        }
+    }
   }
 
   motor1.setSpeed(rightspeed);
